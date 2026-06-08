@@ -1,0 +1,402 @@
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<h2 class="sr-only">حاسبة الموزونة الثنوية للجامعات السعودية</h2>
+
+<style>
+  * {
+    box-sizing: border-box
+  }
+
+  .w {
+    direction: rtl;
+    font-family: 'Tajawal', var(--font-sans), sans-serif;
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 1.25rem 0
+  }
+
+  .hdr {
+    text-align: center;
+    margin-bottom: 1.25rem
+  }
+
+  .hdr h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px
+  }
+
+  .hdr p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--color-background-secondary);
+    padding: 4px;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: 1.25rem
+  }
+
+  .tab {
+    flex: 1;
+    padding: 9px 6px;
+    border-radius: var(--border-radius-md);
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    line-height: 1.4;
+    transition: background 0.12s, color 0.12s
+  }
+
+  .tab.on {
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    font-weight: 500;
+    border: 0.5px solid var(--color-border-secondary)
+  }
+
+  .tab small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.6;
+    direction: ltr;
+    margin-top: 1px
+  }
+
+  .grid {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  }
+
+  .grid.s4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 14px;
+    overflow: hidden;
+    position: relative
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 3px
+  }
+
+  .t1::before {
+    background: #0F6E56
+  }
+
+  .t2::before {
+    background: #1D9E75
+  }
+
+  .t3::before {
+    background: #5DCAA5
+  }
+
+  .t4::before {
+    background: #EF9F27
+  }
+
+  .card-n {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px
+  }
+
+  .card-p {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    display: inline-block;
+    margin-bottom: 8px
+  }
+
+  .card input {
+    width: 100%;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 6px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    background: transparent;
+    color: var(--color-text-primary);
+    direction: ltr;
+    display: block;
+    -moz-appearance: textfield
+  }
+
+  .card input::-webkit-inner-spin-button,
+  .card input::-webkit-outer-spin-button {
+    -webkit-appearance: none
+  }
+
+  .card input:focus {
+    outline: none;
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.12)
+  }
+
+  .card input.err {
+    border-color: var(--color-border-danger);
+    box-shadow: 0 0 0 2px var(--color-background-danger)
+  }
+
+  .res {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    text-align: center
+  }
+
+  .res-lbl {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px
+  }
+
+  .res-n {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-text-secondary)
+  }
+
+  .res-g {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 5px 20px;
+    border-radius: 99px;
+    display: inline-block;
+    margin-top: 10px
+  }
+
+  .bar-wrap {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--color-border-tertiary)
+  }
+
+  .bar-track {
+    height: 8px;
+    background: var(--color-background-secondary);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 14px
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    width: 0;
+    transition: width 0.4s cubic-bezier(.4, 0, .2, 1)
+  }
+
+  .res-bd {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap
+  }
+
+  .bd-i {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    background: var(--color-background-secondary);
+    padding: 4px 12px;
+    border-radius: var(--border-radius-md);
+    white-space: nowrap
+  }
+
+  .bd-i b {
+    color: var(--color-text-primary);
+    font-weight: 500
+  }
+
+  .bd-i s-dim {
+    opacity: 0.55
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: 10px;
+    opacity: 0.7
+  }
+</style>
+
+<div class="w">
+  <div class="hdr">
+    <h1><i class="ti ti-calculator" style="font-size:22px" aria-hidden="true"></i>حاسبة الموزونة</h1>
+    <p>القبول في الجامعات السعودية</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="setMode('std')">
+      نظام عادي
+      <small>30 / 30 / 40</small>
+    </button>
+    <button class="tab" onclick="setMode('step')">
+      جامعة عبدالعزيز
+      <small>30 / 30 / 30 / 10</small>
+    </button>
+    <button class="tab" onclick="setMode('khalid')">
+      جامعة خالد
+      <small>30 / 30 / 35 / 5</small>
+    </button>
+  </div>
+
+  <div id="grid" class="grid">
+    <div class="card t1">
+      <div class="card-n">المدرسة</div>
+      <div class="card-p">30%</div>
+      <input type="number" id="school" min="0" max="100" placeholder="—" oninput="onInput(this);calc()"
+        aria-label="درجة المدرسة من 100">
+    </div>
+    <div class="card t2">
+      <div class="card-n">القدرات</div>
+      <div class="card-p">30%</div>
+      <input type="number" id="qudurat" min="0" max="100" placeholder="—" oninput="onInput(this);calc()"
+        aria-label="درجة القدرات من 100">
+    </div>
+    <div class="card t3">
+      <div class="card-n">التحصيلي</div>
+      <div class="card-p" id="tpct">40%</div>
+      <input type="number" id="tahsili" min="0" max="100" placeholder="—" oninput="onInput(this);calc()"
+        aria-label="درجة التحصيلي من 100">
+    </div>
+    <div class="card t4" id="step-card" style="display:none">
+      <div class="card-n">STEP</div>
+      <div class="card-p" id="step-pct">10%</div>
+      <input type="number" id="si" min="0" max="100" placeholder="—" oninput="onInput(this);calc()"
+        aria-label="درجة STEP من 100">
+    </div>
+  </div>
+
+  <div class="res">
+    <p class="res-lbl">الموزونة الثنوية</p>
+    <div class="res-n" id="rn">—</div>
+    <div class="res-g" id="rg" style="display:none"></div>
+    <div class="bar-wrap" id="bw" style="display:none">
+      <div class="bar-track">
+        <div class="bar-fill" id="bf"></div>
+      </div>
+      <div class="res-bd" id="rb"></div>
+    </div>
+  </div>
+  <p class="hint">أدخل جميع الدرجات للحصول على الموزونة</p>
+</div>
+
+<script>
+  let md = 'std';
+  function onInput(el) {
+    const v = parseFloat(el.value);
+    el.classList.toggle('err', el.value !== '' && (v < 0 || v > 100));
+  }
+  function setMode(m) {
+    md = m;
+    let index = m === 'std' ? 0 : (m === 'step' ? 1 : 2);
+    document.querySelectorAll('.tab').forEach((t, i) => t.className = 'tab' + (i === index ? ' on' : ''));
+    const sc = document.getElementById('step-card');
+    const g = document.getElementById('grid');
+    const tp = document.getElementById('tpct');
+    const spct = document.getElementById('step-pct');
+    if (m === 'step' || m === 'khalid') { 
+        sc.style.display = ''; 
+        g.className = 'grid s4'; 
+        tp.textContent = m === 'step' ? '30%' : '35%'; 
+        if(spct) spct.textContent = m === 'step' ? '10%' : '5%';
+    } else { 
+        sc.style.display = 'none'; 
+        g.className = 'grid'; 
+        tp.textContent = '40%'; 
+        document.getElementById('si').value = ''; 
+    }
+    calc();
+  }
+  function getGrade(n) {
+    if (n >= 95) return { t: 'ممتاز+', s: 'success' };
+    if (n >= 90) return { t: 'ممتاز', s: 'success' };
+    if (n >= 80) return { t: 'جيد جداً', s: 'info' };
+    if (n >= 70) return { t: 'جيد', s: 'info' };
+    if (n >= 60) return { t: 'مقبول', s: 'warning' };
+    return { t: 'ضعيف', s: 'danger' };
+  }
+  function getBarColor(n) {
+    if (n >= 90) return '#1D9E75';
+    if (n >= 80) return '#378ADD';
+    if (n >= 70) return '#378ADD';
+    if (n >= 60) return '#BA7517';
+    return '#E24B4A';
+  }
+  function calc() {
+    const s = parseFloat(document.getElementById('school').value);
+    const q = parseFloat(document.getElementById('qudurat').value);
+    const t = parseFloat(document.getElementById('tahsili').value);
+    const st = parseFloat(document.getElementById('si').value);
+    const rn = document.getElementById('rn');
+    const rg = document.getElementById('rg');
+    const bw = document.getElementById('bw');
+    const bf = document.getElementById('bf');
+    const rb = document.getElementById('rb');
+    
+    const isStep = md === 'step';
+    const isKhalid = md === 'khalid';
+    const hasStepInput = isStep || isKhalid;
+
+    if (isNaN(s) || isNaN(q) || isNaN(t) || (hasStepInput && isNaN(st))) {
+      rn.textContent = '—'; rn.style.color = 'var(--color-text-secondary)';
+      rg.style.display = 'none'; bw.style.display = 'none'; return;
+    }
+    const cs = +(s * 0.3).toFixed(4);
+    const cq = +(q * 0.3).toFixed(4);
+    const ct = isStep ? +(t * 0.3).toFixed(4) : (isKhalid ? +(t * 0.35).toFixed(4) : +(t * 0.4).toFixed(4));
+    const cst = isStep ? +(st * 0.1).toFixed(4) : (isKhalid ? +(st * 0.05).toFixed(4) : 0);
+    const total = Math.min(100, Math.max(0, cs + cq + ct + cst));
+    const g = getGrade(total);
+    rn.textContent = total.toFixed(2) + '%';
+    rn.style.color = `var(--color-text-${g.s})`;
+    rg.textContent = g.t;
+    rg.style.background = `var(--color-background-${g.s})`;
+    rg.style.color = `var(--color-text-${g.s})`;
+    rg.style.display = '';
+    bf.style.width = total + '%';
+    bf.style.background = getBarColor(total);
+    
+    const tahsiliMax = isStep ? 30 : (isKhalid ? 35 : 40);
+    const stepMax = isStep ? 10 : 5;
+
+    let h = `<span class="bd-i">مدرسة <b>${cs.toFixed(2)}</b> <span style="opacity:0.5">/ 30</span></span>` +
+      `<span class="bd-i">قدرات <b>${cq.toFixed(2)}</b> <span style="opacity:0.5">/ 30</span></span>` +
+      `<span class="bd-i">تحصيلي <b>${ct.toFixed(2)}</b> <span style="opacity:0.5">/ ${tahsiliMax}</span></span>`;
+    if (hasStepInput) h += `<span class="bd-i">STEP <b>${cst.toFixed(2)}</b> <span style="opacity:0.5">/ ${stepMax}</span></span>`;
+    rb.innerHTML = h;
+    bw.style.display = '';
+  }
+</script>

@@ -86,6 +86,10 @@
     grid-template-columns: repeat(4, minmax(0, 1fr))
   }
 
+  .grid.s2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+
   .card {
     background: var(--color-background-primary);
     border: 0.5px solid var(--color-border-tertiary);
@@ -270,6 +274,10 @@
       جامعة خالد
       <small>30 / 30 / 35 / 5</small>
     </button>
+    <button class="tab" onclick="setMode('5050')">
+      50:50
+      <small>50 / 50</small>
+    </button>
   </div>
 
   <div id="grid" class="grid">
@@ -321,21 +329,39 @@
   }
   function setMode(m) {
     md = m;
-    let index = m === 'std' ? 0 : (m === 'step' ? 1 : 2);
+    let index = m === 'std' ? 0 : (m === 'step' ? 1 : (m === 'khalid' ? 2 : 3));
     document.querySelectorAll('.tab').forEach((t, i) => t.className = 'tab' + (i === index ? ' on' : ''));
     const sc = document.getElementById('step-card');
+    const tc = document.querySelector('.t3');
     const g = document.getElementById('grid');
     const tp = document.getElementById('tpct');
     const spct = document.getElementById('step-pct');
+    const sch_pct = document.querySelector('.t1 .card-p');
+    const qd_pct = document.querySelector('.t2 .card-p');
+
     if (m === 'step' || m === 'khalid') { 
         sc.style.display = ''; 
+        tc.style.display = '';
         g.className = 'grid s4'; 
         tp.textContent = m === 'step' ? '30%' : '35%'; 
+        sch_pct.textContent = '30%';
+        qd_pct.textContent = '30%';
         if(spct) spct.textContent = m === 'step' ? '10%' : '5%';
+    } else if (m === '5050') {
+        sc.style.display = 'none'; 
+        tc.style.display = 'none';
+        g.className = 'grid s2';
+        sch_pct.textContent = '50%';
+        qd_pct.textContent = '50%';
+        document.getElementById('si').value = ''; 
+        document.getElementById('tahsili').value = ''; 
     } else { 
         sc.style.display = 'none'; 
+        tc.style.display = '';
         g.className = 'grid'; 
         tp.textContent = '40%'; 
+        sch_pct.textContent = '30%';
+        qd_pct.textContent = '30%';
         document.getElementById('si').value = ''; 
     }
     calc();
@@ -368,15 +394,17 @@
     
     const isStep = md === 'step';
     const isKhalid = md === 'khalid';
+    const is5050 = md === '5050';
     const hasStepInput = isStep || isKhalid;
+    const hasTahsiliInput = !is5050;
 
-    if (isNaN(s) || isNaN(q) || isNaN(t) || (hasStepInput && isNaN(st))) {
+    if (isNaN(s) || isNaN(q) || (hasTahsiliInput && isNaN(t)) || (hasStepInput && isNaN(st))) {
       rn.textContent = '—'; rn.style.color = 'var(--color-text-secondary)';
       rg.style.display = 'none'; bw.style.display = 'none'; return;
     }
-    const cs = +(s * 0.3).toFixed(4);
-    const cq = +(q * 0.3).toFixed(4);
-    const ct = isStep ? +(t * 0.3).toFixed(4) : (isKhalid ? +(t * 0.35).toFixed(4) : +(t * 0.4).toFixed(4));
+    const cs = is5050 ? +(s * 0.5).toFixed(4) : +(s * 0.3).toFixed(4);
+    const cq = is5050 ? +(q * 0.5).toFixed(4) : +(q * 0.3).toFixed(4);
+    const ct = is5050 ? 0 : (isStep ? +(t * 0.3).toFixed(4) : (isKhalid ? +(t * 0.35).toFixed(4) : +(t * 0.4).toFixed(4)));
     const cst = isStep ? +(st * 0.1).toFixed(4) : (isKhalid ? +(st * 0.05).toFixed(4) : 0);
     const total = Math.min(100, Math.max(0, cs + cq + ct + cst));
     const g = getGrade(total);
@@ -389,12 +417,14 @@
     bf.style.width = total + '%';
     bf.style.background = getBarColor(total);
     
-    const tahsiliMax = isStep ? 30 : (isKhalid ? 35 : 40);
-    const stepMax = isStep ? 10 : 5;
+    const schMax = is5050 ? 50 : 30;
+    const qdMax = is5050 ? 50 : 30;
+    const tahsiliMax = isStep ? 30 : (isKhalid ? 35 : (is5050 ? 0 : 40));
+    const stepMax = isStep ? 10 : (isKhalid ? 5 : 0);
 
-    let h = `<span class="bd-i">مدرسة <b>${cs.toFixed(2)}</b> <span style="opacity:0.5">/ 30</span></span>` +
-      `<span class="bd-i">قدرات <b>${cq.toFixed(2)}</b> <span style="opacity:0.5">/ 30</span></span>` +
-      `<span class="bd-i">تحصيلي <b>${ct.toFixed(2)}</b> <span style="opacity:0.5">/ ${tahsiliMax}</span></span>`;
+    let h = `<span class="bd-i">مدرسة <b>${cs.toFixed(2)}</b> <span style="opacity:0.5">/ ${schMax}</span></span>` +
+      `<span class="bd-i">قدرات <b>${cq.toFixed(2)}</b> <span style="opacity:0.5">/ ${qdMax}</span></span>`;
+    if (hasTahsiliInput) h += `<span class="bd-i">تحصيلي <b>${ct.toFixed(2)}</b> <span style="opacity:0.5">/ ${tahsiliMax}</span></span>`;
     if (hasStepInput) h += `<span class="bd-i">STEP <b>${cst.toFixed(2)}</b> <span style="opacity:0.5">/ ${stepMax}</span></span>`;
     rb.innerHTML = h;
     bw.style.display = '';
